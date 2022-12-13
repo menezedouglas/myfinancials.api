@@ -9,7 +9,7 @@ return [
             'not_found' => 'Transação não encontrada.',
         ],
         'payer' => [
-            'not_found' => 'Transação não encontrada.',
+            'not_found' => 'Pagador não encontrado.',
         ],
         'default' => 'Houve um problema em nosso servidor. Por favor, tente novamente mais tarde!',
         'user' => [

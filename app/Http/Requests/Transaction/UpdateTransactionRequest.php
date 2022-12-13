@@ -28,8 +28,8 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'bank_id' => 'required|integer|exists:App/Models/Bank,id',
-            'payer_id' => 'required|integer|exists:App/Models/Payer,id',
+            'bank_id' => 'nullable|integer|exists:App\Models\Bank,id',
+            'payer_id' => 'nullable|integer|exists:App\Models\Payer,id',
             'type' => 'nullable|string',
             'amount' => 'nullable|numeric',
             'description' => 'nullable|string'
@@ -39,8 +39,8 @@ class UpdateTransactionRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'bank_id' => 'Nome',
-            'type' => 'Chave Pix',
+            'bank_id' => 'ID do Banco',
+            'type' => 'Tipo de Transação',
             'amount' => 'Quantia',
             'description' => 'Descrição'
         ];

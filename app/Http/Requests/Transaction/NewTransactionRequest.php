@@ -27,8 +27,8 @@ class NewTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'bank_id' => 'required|integer|exists:App/Models/Bank,id',
-            'payer_id' => 'required|integer|exists:App/Models/Payer,id',
+            'bank_id' => 'required|integer|exists:App\Models\Bank,id',
+            'payer_id' => 'required|integer|exists:App\Models\Payer,id',
             'type' => 'required|string',
             'amount' => 'required|numeric',
             'description' => 'nullable|string'
