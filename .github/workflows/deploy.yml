@@ -1,0 +1,62 @@
+on:
+  push:
+    branches:
+      - master
+name: 🚀 Build and Deploy to Production Server
+permissions:
+  contents: write
+jobs:
+  setup:
+    name: 🚧 Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+        with:
+          php-version: '7.4'
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Set Permissions
+        run: sudo chmod -R 777 *
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: 🔑 Generate Application Key
+        run: php artisan key:generate
+
+      - name: 🔑 Generate JWT Secret
+        run: php artisan jwt:secret
+
+      - name: 🔑 Setup Environment Variables
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_DATABASE: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          php artisan env:set APP_ENV=production
+          php artisan env:set APP_DEBUG=false
+          php artisan env:set APP_URL="${{secrets.APP_URL}}"
+          php artisan env:set DB_HOST="${{secrets.DB_HOST}}"
+          php artisan env:set DB_PORT="${{secrets.DB_PORT}}"
+          php artisan env:set DB_DATABASE="${{secrets.DB_DATABASE}}"
+          php artisan env:set DB_USERNAME="${{secrets.DB_USERNAME}}"
+          php artisan env:set DB_PASSWORD="${{secrets.DB_PASSWORD}}"
+          php artisan env:set QUEUE_CONNECTION=database
+
+      - name: 💾 Create Database
+        run: php artisan migrate --force
+
+      - name: 🎉 Deploying
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
