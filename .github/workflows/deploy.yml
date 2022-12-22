@@ -10,30 +10,50 @@ jobs:
     name: 🚧 Build
     runs-on: ubuntu-latest
     steps:
-      - name: multiple command
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd myfinancials
-            rm -r api
-            git clone https://github.com/menezedouglas/myfinancials.api.git api
-            cd api
-            composer install
-            cp .env.example .env
-            php artisan key:generate
-            php artisan jwt:secret
-            php artisan env:set APP_ENV=production
-            php artisan env:set APP_DEBUG=false
-            php artisan env:set APP_URL="${{ secrets.APP_URL }}"
-            php artisan env:set DB_HOST="${{ secrets.DB_HOST }}"
-            php artisan env:set DB_PORT="${{ secrets.DB_PORT }}"
-            php artisan env:set DB_DATABASE="${{ secrets.DB_NAME }}"
-            php artisan env:set DB_USERNAME="${{ secrets.DB_USER }}"
-            php artisan env:set DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-            php artisan env:set QUEUE_CONNECTION=database
-            php artisan migrate --force
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
 
+      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+        with:
+          php-version: '7.4'
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Set Permissions
+        run: sudo chmod -R 777 *
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: 🔑 Generate Application Key
+        run: php artisan key:generate
+
+      - name: 🔑 Generate JWT Secret
+        run: php artisan jwt:secret
+
+      - name: 🔑 Setup Environment Variables
+        run: |
+          php artisan env:set APP_ENV=production
+          php artisan env:set APP_DEBUG=false
+          php artisan env:set APP_URL="${{ secrets.APP_URL }}"
+          php artisan env:set DB_HOST="${{ secrets.DB_HOST }}"
+          php artisan env:set DB_PORT="${{ secrets.DB_PORT }}"
+          php artisan env:set DB_DATABASE="${{ secrets.DB_NAME }}"
+          php artisan env:set DB_USERNAME="${{ secrets.DB_USER }}"
+          php artisan env:set DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          php artisan env:set QUEUE_CONNECTION=database
+
+      - name: 💾 Create Database
+        run: php artisan migrate --force
+
+      - name: 🔑 Setup Environment Variables
+        run: |
+          php artisan env:set DB_HOST=localhost
+
+      - name: 🎉 Deploying
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
