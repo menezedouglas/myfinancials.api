@@ -43,12 +43,12 @@ class TransactionService extends AbstractService
      * @param int $payerId
      * @param string $type
      * @param float $amount
-     * @param string $description
+     * @param string|null $description
      * @return void
      * @throws BankNotFoundException
      * @throws PayerNotFoundException
      */
-    public function create(int $bankId, int $payerId, string $type, float $amount, string $description): void
+    public function create(int $bankId, int $payerId, string $type, float $amount, ?string $description): void
     {
         $transaction = new Transaction();
 

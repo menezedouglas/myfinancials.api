@@ -56,7 +56,6 @@ class TransactionController extends Controller
 
             return new DefaultResource([]);
         } catch (Throwable $exception) {
-            dd($exception);
             throw new Exception($exception);
         }
     }
