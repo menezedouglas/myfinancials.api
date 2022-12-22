@@ -47,6 +47,10 @@ jobs:
       - name: 💾 Create Database
         run: php artisan migrate --force
 
+      - name: 🔑 Setup Environment Variables
+        run: |
+          php artisan env:set DB_HOST=localhost
+
       - name: 🎉 Deploying
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
