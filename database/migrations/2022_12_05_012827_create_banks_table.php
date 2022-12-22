@@ -18,6 +18,7 @@ class CreateBanksTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->string('name');
             $table->string('pix')->nullable();
+            $table->string('currency')->default('BRL');
             $table->timestamps();
             $table->softDeletes();
         });

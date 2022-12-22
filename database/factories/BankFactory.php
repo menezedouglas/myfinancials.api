@@ -18,7 +18,8 @@ class BankFactory extends Factory
     {
         return [
             'name' => $this->faker->company,
-            'pix' => $this->faker->email
+            'pix' => $this->faker->email,
+            'currency' => 'BRL'
         ];
     }
 }

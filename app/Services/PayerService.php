@@ -31,7 +31,10 @@ class PayerService extends AbstractService
     {
         $payer = $this->getAuthenticatedUser()
             ->payers()
-            ->with(['transactions:id,payer_id,description,type,currency,amount'])
+            ->with([
+                'transactions:id,bank_id,payer_id,description,type,currency,amount',
+                'transactions.bank:id,name'
+            ])
             ->select(['id', 'name', 'email'])
             ->find($id);
 

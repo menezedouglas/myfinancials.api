@@ -52,7 +52,9 @@ class UserController extends Controller
                 $this->userService->register(
                     $request->input('name'),
                     $request->input('email'),
-                    $request->input('password')
+                    $request->input('password'),
+                    $request->input('privacy_policy'),
+                    $request->input('service_terms')
                 )
             );
         } catch (\Throwable $exception) {

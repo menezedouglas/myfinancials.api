@@ -30,6 +30,8 @@ class NewUserRequest extends FormRequest
             'name' => 'required|string',
             'email' => 'required|email:rfc,dns|unique:App\Models\User',
             'password' => 'required|confirmed',
+            'privacy_policy' => 'required|boolean',
+            'service_terms' => 'required|boolean'
         ];
     }
 

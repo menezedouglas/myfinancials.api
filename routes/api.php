@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\PayerController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

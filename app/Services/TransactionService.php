@@ -3,12 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\Bank\BankNotFoundException;
-use App\Models\Payer;
 use App\Models\Transaction;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use App\Exceptions\Payer\PayerNotFoundException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Exceptions\Transactions\TransactionNotFoundException;
 
 class TransactionService extends AbstractService
@@ -17,13 +14,14 @@ class TransactionService extends AbstractService
     {
         return $this->getAuthenticatedUser()
             ->transactions()
-            ->select(['id', 'description', 'type', 'currency', 'amount'])
+            ->with(['bank:id,name', 'payer:id,name'])
+            ->select(['id', 'bank_id', 'payer_id', 'description', 'type', 'currency', 'amount'])
             ->get();
     }
 
     /**
      * @param int $transactionId
-     * @return Collection|Model|HasMany|HasMany[]
+     * @return Collection
      * @throws TransactionNotFoundException
      */
     public function show(int $transactionId)
@@ -71,6 +69,7 @@ class TransactionService extends AbstractService
 
         $transaction['amount'] = $amount;
         $transaction['description'] = $description;
+        $transaction['currency'] = $bank['currency'];
         $transaction->user()->associate($this->getAuthenticatedUser());
         $transaction->bank()->associate($bank);
         $transaction->payer()->associate($payer);

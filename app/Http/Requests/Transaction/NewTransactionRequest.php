@@ -38,7 +38,8 @@ class NewTransactionRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'bank_id' => 'ID do Banco',
+            'bank_id' => 'Banco',
+            'payer_id' => 'Pagador',
             'type' => 'Tipo de Transação',
             'amount' => 'Quantia',
             'description' => 'Descrição'

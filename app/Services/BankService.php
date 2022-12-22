@@ -28,7 +28,7 @@ class BankService extends AbstractService
             ->banks()
             ->with([
                 'transactions:id,bank_id,payer_id,description,type,currency,amount',
-                'transactions.payer:id,name,email'
+                'transactions.payer:id,name'
             ])
             ->find($id);
 

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $user_id
  * @property string $name
  * @property string $pix
+ * @property string $currency
  * @property string $created_at
  * @property string $updated_at
  * @property string $deleted_at
@@ -35,6 +36,7 @@ class Bank extends Model
         'user_id',
         'name',
         'pix',
+        'currency'
     ];
 
     protected $hidden = [

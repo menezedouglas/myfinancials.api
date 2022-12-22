@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Exceptions\User\CantRegisterWhenLoggedException;
+use App\Exceptions\User\NeedAcceptPrivacyPolicyException;
+use App\Exceptions\User\NeedAcceptTermsOfServiceException;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,13 +23,23 @@ class UserService extends AbstractService
      * @param string $name
      * @param string $email
      * @param string $password
+     * @param bool $privacyPolicy
+     * @param bool $serviceTerms
      * @return User
      * @throws CantRegisterWhenLoggedException
+     * @throws NeedAcceptPrivacyPolicyException
+     * @throws NeedAcceptTermsOfServiceException
      */
-    public function register(string $name, string $email, string $password): User
+    public function register(string $name, string $email, string $password, bool $privacyPolicy, bool $serviceTerms): User
     {
         if(Auth::check())
             throw new CantRegisterWhenLoggedException();
+
+        if(!$privacyPolicy)
+            throw new NeedAcceptPrivacyPolicyException();
+
+        if(!$serviceTerms)
+            throw new NeedAcceptTermsOfServiceException();
 
         $user = new User();
         $user->name = $name;

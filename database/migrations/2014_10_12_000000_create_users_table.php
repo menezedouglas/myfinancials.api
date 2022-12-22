@@ -18,6 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->boolean('accepted_privacy_policy')->default(false);
+            $table->boolean('accepted_terms_of_service')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
