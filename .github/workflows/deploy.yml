@@ -33,22 +33,15 @@ jobs:
         run: php artisan jwt:secret
 
       - name: 🔑 Setup Environment Variables
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_NAME }}
-          DB_USERNAME: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           php artisan env:set APP_ENV=production
           php artisan env:set APP_DEBUG=false
-          php artisan env:set APP_URL="${{secrets.APP_URL}}"
-          php artisan env:set DB_HOST="${{secrets.DB_HOST}}"
-          php artisan env:set DB_PORT="${{secrets.DB_PORT}}"
-          php artisan env:set DB_DATABASE="${{secrets.DB_DATABASE}}"
-          php artisan env:set DB_USERNAME="${{secrets.DB_USERNAME}}"
-          php artisan env:set DB_PASSWORD="${{secrets.DB_PASSWORD}}"
+          php artisan env:set APP_URL="${{ secrets.APP_URL }}"
+          php artisan env:set DB_HOST="${{ secrets.DB_HOST }}"
+          php artisan env:set DB_PORT="${{ secrets.DB_PORT }}"
+          php artisan env:set DB_DATABASE="${{ secrets.DB_NAME }}"
+          php artisan env:set DB_USERNAME="${{ secrets.DB_USER }}"
+          php artisan env:set DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
           php artisan env:set QUEUE_CONNECTION=database
 
       - name: 💾 Create Database
