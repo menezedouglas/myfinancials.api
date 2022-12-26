@@ -4,36 +4,45 @@ namespace App\Services;
 
 use App\Exceptions\Bank\BankNotFoundException;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Exceptions\Payer\PayerNotFoundException;
 use App\Exceptions\Transactions\TransactionNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TransactionService extends AbstractService
 {
-    public function all(): Collection
+    public function all(?string $initDate = null, ?string $endDate = null): Collection
     {
         return $this->getAuthenticatedUser()
             ->transactions()
             ->with(['bank:id,name', 'payer:id,name'])
-            ->select(['id', 'bank_id', 'payer_id', 'description', 'type', 'currency', 'amount'])
+            ->select(['id', 'bank_id', 'payer_id', 'transaction_date', 'description', 'type', 'currency', 'amount'])
+            ->where([
+                ['transaction_date', '>=', $initDate],
+                ['transaction_date', '<=', $endDate],
+            ])
             ->get();
     }
 
     /**
      * @param int $transactionId
-     * @return Collection
+     * @return Model|HasMany|object
      * @throws TransactionNotFoundException
      */
     public function show(int $transactionId)
     {
         $transaction = $this->getAuthenticatedUser()
             ->transactions()
-            ->with(['bank', 'payer:id,name,email'])
-            ->select(['id', 'description', 'type', 'currency', 'amount', 'bank_id', 'payer_id'])
-            ->find($transactionId);
+            ->with(['bank:id,name', 'payer:id,name'])
+            ->select(['id', 'bank_id', 'payer_id', 'transaction_date', 'description', 'type', 'currency', 'amount'])
+            ->where('id', $transactionId)
+            ->first();
 
-        if(!$transaction)
+        if (!$transaction) {
             throw new TransactionNotFoundException();
+        }
 
         return $transaction;
     }
@@ -43,12 +52,13 @@ class TransactionService extends AbstractService
      * @param int $payerId
      * @param string $type
      * @param float $amount
+     * @param string $date
      * @param string|null $description
      * @return void
      * @throws BankNotFoundException
      * @throws PayerNotFoundException
      */
-    public function create(int $bankId, int $payerId, string $type, float $amount, ?string $description): void
+    public function create(int $bankId, int $payerId, string $type, float $amount, string $date, ?string $description): void
     {
         $transaction = new Transaction();
 
@@ -69,6 +79,7 @@ class TransactionService extends AbstractService
 
         $transaction['amount'] = $amount;
         $transaction['description'] = $description;
+        $transaction['transaction_date'] = Carbon::parse($date);
         $transaction['currency'] = $bank['currency'];
         $transaction->user()->associate($this->getAuthenticatedUser());
         $transaction->bank()->associate($bank);
@@ -80,6 +91,7 @@ class TransactionService extends AbstractService
      * @param int $transactionId
      * @param int|null $bankId
      * @param int|null $payerId
+     * @param string|null $date
      * @param string|null $type
      * @param float|null $amount
      * @param string|null $description
@@ -88,7 +100,7 @@ class TransactionService extends AbstractService
      * @throws PayerNotFoundException
      * @throws TransactionNotFoundException
      */
-    public function update(int $transactionId, ?int $bankId = null, ?int $payerId = null, ?string $type = null, ?float $amount = null, ?string $description = null): void
+    public function update(int $transactionId, ?int $bankId = null, ?int $payerId = null, ?string $date = null, ?string $type = null, ?float $amount = null, ?string $description = null): void
     {
         /**
          * @var Transaction|null $transaction
@@ -127,6 +139,9 @@ class TransactionService extends AbstractService
         if($description)
             $transaction['description'] = $description;
 
+        if($date)
+            $transaction['transaction_date'] = Carbon::parse($date);
+
         $transaction->save();
     }
 
@@ -144,5 +159,23 @@ class TransactionService extends AbstractService
             throw new TransactionNotFoundException();
 
         $transaction->delete();
+    }
+
+    public static function validDates(?string $initDate = null, ?string $endDate = null): array
+    {
+        if (!$initDate && !$endDate) {
+            $initDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        if (!$initDate && $endDate) {
+            $initDate = Carbon::parse($endDate)->startOfMonth()->format('Y-m-d');
+        }
+
+        if($initDate && !$endDate) {
+            $endDate = Carbon::parse($initDate)->endOfMonth()->format('Y-m-d');
+        }
+
+        return ['init' => $initDate, 'end' => $endDate];
     }
 }

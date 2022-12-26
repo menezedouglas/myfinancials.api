@@ -10,6 +10,8 @@ use App\Http\Requests\Transaction\NewTransactionRequest;
 use App\Http\Requests\Transaction\UpdateTransactionRequest;
 use App\Http\Resources\DefaultResource;
 use App\Services\TransactionService;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Throwable;
 
 class TransactionController extends Controller
@@ -25,11 +27,19 @@ class TransactionController extends Controller
      * @return DefaultResource
      * @throws Exception
      */
-    public function index(): DefaultResource
+    public function index(Request $request): DefaultResource
     {
         try {
+            $data = $this->transactionService::validDates(
+                $request->input('init_date'),
+                $request->input('end_date')
+            );
+
             return new DefaultResource(
-                $this->transactionService->all()
+                $this->transactionService->all(
+                    $data['init'],
+                    $data['end']
+                )
             );
         } catch (Throwable $exception) {
             throw new Exception($exception);
@@ -51,6 +61,7 @@ class TransactionController extends Controller
                 $request->input('payer_id'),
                 $request->input('type'),
                 $request->input('amount'),
+                $request->input('date'),
                 $request->input('description')
             );
 
@@ -91,6 +102,7 @@ class TransactionController extends Controller
                 $id,
                 $request->input('bank_id'),
                 $request->input('payer_id'),
+                $request->input('date'),
                 $request->input('type'),
                 $request->input('amount'),
                 $request->input('description')

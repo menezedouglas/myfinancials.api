@@ -29,6 +29,7 @@ class NewTransactionRequest extends FormRequest
         return [
             'bank_id' => 'required|integer|exists:App\Models\Bank,id',
             'payer_id' => 'required|integer|exists:App\Models\Payer,id',
+            'date' => 'required|date',
             'type' => 'required|string',
             'amount' => 'required|numeric',
             'description' => 'nullable|string'
@@ -40,6 +41,7 @@ class NewTransactionRequest extends FormRequest
         return [
             'bank_id' => 'Banco',
             'payer_id' => 'Pagador',
+            'date' => 'Data da Transação',
             'type' => 'Tipo de Transação',
             'amount' => 'Quantia',
             'description' => 'Descrição'

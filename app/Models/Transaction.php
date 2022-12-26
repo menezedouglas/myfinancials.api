@@ -43,6 +43,7 @@ class Transaction extends Model
         'user_id',
         'bank_id',
         'payer_id',
+        'transaction_date',
         'description',
         'type',
         'currency',
@@ -51,6 +52,7 @@ class Transaction extends Model
 
     protected $casts = [
         'amount' => MoneyCast::class,
+        'transaction_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'

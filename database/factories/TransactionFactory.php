@@ -21,6 +21,7 @@ class TransactionFactory extends Factory
             'type' => rand(1, 2),
             'currency' => 'BRL',
             'amount' => rand(500, 9999999) / 100,
+            'transaction_date' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

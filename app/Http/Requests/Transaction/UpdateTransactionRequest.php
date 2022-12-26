@@ -30,6 +30,7 @@ class UpdateTransactionRequest extends FormRequest
         return [
             'bank_id' => 'nullable|integer|exists:App\Models\Bank,id',
             'payer_id' => 'nullable|integer|exists:App\Models\Payer,id',
+            'date' => 'nullable|date',
             'type' => 'nullable|string',
             'amount' => 'nullable|numeric',
             'description' => 'nullable|string'
@@ -41,6 +42,7 @@ class UpdateTransactionRequest extends FormRequest
         return [
             'bank_id' => 'ID do Banco',
             'type' => 'Tipo de Transação',
+            'date' => 'Data da Transação',
             'amount' => 'Quantia',
             'description' => 'Descrição'
         ];
