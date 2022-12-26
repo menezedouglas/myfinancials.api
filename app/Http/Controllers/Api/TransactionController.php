@@ -30,15 +30,10 @@ class TransactionController extends Controller
     public function index(Request $request): DefaultResource
     {
         try {
-            $data = $this->transactionService::validDates(
-                $request->input('init_date'),
-                $request->input('end_date')
-            );
-
             return new DefaultResource(
                 $this->transactionService->all(
-                    $data['init'],
-                    $data['end']
+                    $request->input('init_date'),
+                    $request->input('end_date')
                 )
             );
         } catch (Throwable $exception) {

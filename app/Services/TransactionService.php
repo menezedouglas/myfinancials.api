@@ -15,15 +15,21 @@ class TransactionService extends AbstractService
 {
     public function all(?string $initDate = null, ?string $endDate = null): Collection
     {
-        return $this->getAuthenticatedUser()
+        $query = $this->getAuthenticatedUser()
             ->transactions()
             ->with(['bank:id,name', 'payer:id,name'])
-            ->select(['id', 'bank_id', 'payer_id', 'transaction_date', 'description', 'type', 'currency', 'amount'])
-            ->where([
-                ['transaction_date', '>=', $initDate],
-                ['transaction_date', '<=', $endDate],
-            ])
-            ->get();
+            ->select(['id', 'bank_id', 'payer_id', 'transaction_date', 'description', 'type', 'currency', 'amount']);
+
+        if ($initDate || $endDate) {
+            $data = self::validDates($initDate, $endDate);
+
+            $query->where([
+                ['transaction_date', '>=', $data['init']],
+                ['transaction_date', '<=', $data['end']],
+            ]);
+        }
+
+        return $query->get();
     }
 
     /**
