@@ -54,6 +54,26 @@ class TransactionService extends AbstractService
     }
 
     /**
+     * @param array $data
+     * @return void
+     * @throws BankNotFoundException
+     * @throws PayerNotFoundException
+     */
+    public function createFromArray(array $data)
+    {
+        foreach ($data as $transaction) {
+            $this->create(
+                $transaction['bank_id'],
+                $transaction['payer_id'],
+                $transaction['type'],
+                $transaction['amount'],
+                $transaction['date'],
+                $transaction['description']
+            );
+        }
+    }
+
+    /**
      * @param int $bankId
      * @param int $payerId
      * @param string $type

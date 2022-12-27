@@ -71,6 +71,7 @@ Route::controller(TransactionController::class)
     ->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');
+        Route::post('/multiple', 'storeFromArray')->name('storeMultiple');
         Route::prefix('{id}')->group(function () {
             Route::put('/', 'update')->name('update');
             Route::delete('/', 'destroy')->name('delete');

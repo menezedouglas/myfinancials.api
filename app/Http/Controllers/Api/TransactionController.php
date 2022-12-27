@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Bank\NewBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Http\Requests\Transaction\NewTransactionRequest;
+use App\Http\Requests\Transaction\NewTransactionsRequest;
 use App\Http\Requests\Transaction\UpdateTransactionRequest;
 use App\Http\Resources\DefaultResource;
 use App\Services\TransactionService;
@@ -24,6 +25,7 @@ class TransactionController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return DefaultResource
      * @throws Exception
      */
@@ -62,6 +64,27 @@ class TransactionController extends Controller
 
             return new DefaultResource([]);
         } catch (Throwable $exception) {
+            throw new Exception($exception);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param NewTransactionsRequest $request
+     * @return DefaultResource
+     * @throws Exception
+     */
+    public function storeFromArray(NewTransactionsRequest $request): DefaultResource
+    {
+        try {
+            $this->transactionService->createFromArray(
+                $request->input('transactions')
+            );
+
+            return new DefaultResource([]);
+        } catch (Throwable $exception) {
+            dd($exception);
             throw new Exception($exception);
         }
     }
